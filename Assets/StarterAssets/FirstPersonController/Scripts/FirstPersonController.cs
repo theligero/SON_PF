@@ -289,45 +289,48 @@ namespace StarterAssets
 			{
 				// Reproducir paso
 				FMODUnity.RuntimeManager.PlayOneShot(_currentFootstepEvent, transform.position);
-				StartCoroutine(StepSway());
+				StartCoroutine(StepTilt());
 				_stepCycle = 0.0f;
 			}
 
 			_lastPosition = transform.position;
 		}
 
-        private IEnumerator StepSway()
+        private IEnumerator StepTilt()
         {
-            Vector3 originalPos = _cameraHolder.localPosition;
+            Quaternion originalRot = _cameraHolder.localRotation;
 
-            // Calcula dirección diagonal respecto al avance
-            Vector3 diagOffset = transform.forward * 0.035f;
-            diagOffset += _stepLeft ? transform.right * 0.025f : -transform.right * 0.025f;
-
-            Vector3 targetPos = originalPos + diagOffset;
+            // Ángulos deseados
+            float tiltRoll = _stepLeft ? -0.5f : 0.5f;     // inclinación izq/dcha (roll Z)
+            float tiltPitch = -0.25f;                      // leve cabeceo hacia delante (pitch X)
             _stepLeft = !_stepLeft;
 
-            float t = 0f;
-            float duration = 0.1f; // puedes ajustar
+            Quaternion targetRot = originalRot * Quaternion.Euler(tiltPitch, 0f, tiltRoll);
 
+            float t = 0f;
+            float duration = 0.1f;
+
+            // Giro hacia el lado + frente
             while (t < duration)
             {
                 t += Time.deltaTime;
-                _cameraHolder.localPosition = Vector3.Lerp(originalPos, targetPos, t / duration);
+                _cameraHolder.localRotation = Quaternion.Slerp(originalRot, targetRot, t / duration);
                 yield return null;
             }
 
             t = 0f;
 
+            // Volver al centro
             while (t < duration)
             {
                 t += Time.deltaTime;
-                _cameraHolder.localPosition = Vector3.Lerp(targetPos, originalPos, t / duration);
+                _cameraHolder.localRotation = Quaternion.Slerp(targetRot, originalRot, t / duration);
                 yield return null;
             }
 
-            _cameraHolder.localPosition = originalPos;
+            _cameraHolder.localRotation = originalRot;
         }
+
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 		{
