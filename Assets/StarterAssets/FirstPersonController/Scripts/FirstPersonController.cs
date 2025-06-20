@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 #if ENABLE_INPUT_SYSTEM
 using UnityEngine.InputSystem;
 #endif
@@ -74,6 +75,19 @@ namespace StarterAssets
 
 		private const float _threshold = 0.01f;
 
+		// Paso
+		private float _stepDistance = 7.5f; // cada cuántos metro da un paso
+		private float _stepCycle;
+		private Vector3 _lastPosition;
+
+		[SerializeField]
+		private string _currentFootstepEvent = "event:/Footstep_Normal"; // tipo de paso inicial
+
+		[SerializeField]
+		private Transform _cameraHolder;
+
+		private bool _stepLeft = true;
+
 		private bool IsCurrentDeviceMouse
 		{
 			get
@@ -108,6 +122,22 @@ namespace StarterAssets
 			// reset our timeouts on start
 			_jumpTimeoutDelta = JumpTimeout;
 			_fallTimeoutDelta = FallTimeout;
+
+			_lastPosition = transform.position;
+
+			if (_cameraHolder == null)
+			{
+				var mainCam = Camera.main;
+				if (mainCam != null)
+				{
+					_cameraHolder = mainCam.transform.parent;
+				}
+
+				if (_cameraHolder == null)
+				{
+					Debug.LogWarning("CameraHolder no encontrado. Asigna manualmente en el inspector");
+				}
+			} 
 		}
 
 		private void Update()
@@ -196,6 +226,8 @@ namespace StarterAssets
 
 			// move the player
 			_controller.Move(inputDirection.normalized * (_speed * Time.deltaTime) + new Vector3(0.0f, _verticalVelocity, 0.0f) * Time.deltaTime);
+
+			HandleFootsteps();
 		}
 
 		private void JumpAndGravity()
@@ -246,7 +278,58 @@ namespace StarterAssets
 			}
 		}
 
-		private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
+		private void HandleFootsteps()
+		{
+			if (!Grounded || _input.move == Vector2.zero) return;
+
+			float distanceMoved = Vector3.Distance(transform.position, _lastPosition);
+			_stepCycle += distanceMoved;
+
+			if (_stepCycle > _stepDistance)
+			{
+				// Reproducir paso
+				FMODUnity.RuntimeManager.PlayOneShot(_currentFootstepEvent, transform.position);
+				StartCoroutine(StepSway());
+				_stepCycle = 0.0f;
+			}
+
+			_lastPosition = transform.position;
+		}
+
+        private IEnumerator StepSway()
+        {
+            Vector3 originalPos = _cameraHolder.localPosition;
+
+            // Calcula dirección diagonal respecto al avance
+            Vector3 diagOffset = transform.forward * 0.035f;
+            diagOffset += _stepLeft ? transform.right * 0.025f : -transform.right * 0.025f;
+
+            Vector3 targetPos = originalPos + diagOffset;
+            _stepLeft = !_stepLeft;
+
+            float t = 0f;
+            float duration = 0.1f; // puedes ajustar
+
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                _cameraHolder.localPosition = Vector3.Lerp(originalPos, targetPos, t / duration);
+                yield return null;
+            }
+
+            t = 0f;
+
+            while (t < duration)
+            {
+                t += Time.deltaTime;
+                _cameraHolder.localPosition = Vector3.Lerp(targetPos, originalPos, t / duration);
+                yield return null;
+            }
+
+            _cameraHolder.localPosition = originalPos;
+        }
+
+        private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
 		{
 			if (lfAngle < -360f) lfAngle += 360f;
 			if (lfAngle > 360f) lfAngle -= 360f;

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{c70cbfb8-ac1a-40fd-94f7-d3a9e1f49b2b}">
+		<property name="assetPath">
+			<value>wind_fence5.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>12.220437499999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{15451c2e-d49d-44e1-bf63-4bc9b05943b8}</destination>
+		</relationship>
+	</object>
+</objects>
