@@ -70,6 +70,9 @@
 		<relationship name="modules">
 			<destination>{1c45ac6b-5958-4a6f-bfef-feed58bd7324}</destination>
 		</relationship>
+		<relationship name="markers">
+			<destination>{6cd2a910-ade7-4e59-af04-e6ade0ab17fb}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{defaa481-8997-40b9-a701-466f1f75409d}">
 		<relationship name="effectChain">
@@ -113,6 +116,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{92e7ea18-621b-4a8d-b168-3260145b5d35}">
+		<property name="volume">
+			<value>10</value>
+		</property>
 		<property name="name">
 			<value>Audio 1</value>
 		</property>
@@ -124,6 +130,20 @@
 		</relationship>
 		<relationship name="output">
 			<destination>{defaa481-8997-40b9-a701-466f1f75409d}</destination>
+		</relationship>
+	</object>
+	<object class="LoopRegion" id="{6cd2a910-ade7-4e59-af04-e6ade0ab17fb}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="length">
+			<value>20</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{9280c8de-4e9f-4a41-a357-a66c50b1921d}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{e5f17f6d-a5e8-440b-b837-7e3df8de40a0}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{83668b38-f395-4215-b7af-5982a70466ea}">
@@ -162,6 +182,8 @@
 		<relationship name="effects">
 			<destination>{d419c182-be94-4ee3-8ebf-8302eed6befb}</destination>
 			<destination>{c8e3dfe5-0a6e-4275-a509-c76d92c43d0c}</destination>
+			<destination>{8282ac39-3f44-4df3-8d75-d55a58cfac99}</destination>
+			<destination>{382d9bf4-8d1a-4775-b923-6947dc784980}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{4681f898-a9ca-42be-9296-e412c797ceae}" />
@@ -195,6 +217,43 @@
 	<object class="SpatialiserEffect" id="{c8e3dfe5-0a6e-4275-a509-c76d92c43d0c}">
 		<property name="distanceRolloffType">
 			<value>2</value>
+		</property>
+	</object>
+	<object class="MultibandEqEffect" id="{8282ac39-3f44-4df3-8d75-d55a58cfac99}">
+		<property name="filterTypeA">
+			<value>0</value>
+		</property>
+		<property name="filterTypeB">
+			<value>7</value>
+		</property>
+		<property name="filterTypeD">
+			<value>8</value>
+		</property>
+		<property name="frequencyA">
+			<value>9407.97559</value>
+		</property>
+		<property name="frequencyB">
+			<value>816.034058</value>
+		</property>
+		<property name="frequencyD">
+			<value>466.398163</value>
+		</property>
+		<property name="qualityA">
+			<value>3.24137926</value>
+		</property>
+		<property name="qualityD">
+			<value>6.20689631</value>
+		</property>
+		<property name="gainB">
+			<value>-20.6896553</value>
+		</property>
+		<property name="gainD">
+			<value>23.2758636</value>
+		</property>
+	</object>
+	<object class="SFXReverbEffect" id="{382d9bf4-8d1a-4775-b923-6947dc784980}">
+		<property name="wetLevel">
+			<value>-18</value>
 		</property>
 	</object>
 </objects>
