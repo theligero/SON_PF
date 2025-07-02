@@ -52,8 +52,20 @@ namespace StarterAssets
 		[Tooltip("How far in degrees can you move the camera down")]
 		public float BottomClamp = -90.0f;
 
-		// cinemachine
-		private float _cinemachineTargetPitch;
+        [Header("FMOD - Respiración")]
+        [FMODUnity.EventRef]
+        public string breathingEvent = "event:/Breathing";
+
+        private FMOD.Studio.EventInstance _breathingInstance;
+        private float _breathingLevel = 0f; // nivel actual del parámetro 'actividad'
+
+        [SerializeField]
+        private float breathingDecayRate = 0.066f; // velocidad a la que baja tras correr
+        [SerializeField]
+        private float breathingRiseRate = 0.1f;    // velocidad a la que sube al correr
+
+        // cinemachine
+        private float _cinemachineTargetPitch;
 
 		// player
 		private float _speed;
@@ -81,7 +93,7 @@ namespace StarterAssets
 		private Vector3 _lastPosition;
 
 		[SerializeField]
-		private string _currentFootstepEvent = "event:/Footstep_Normal"; // tipo de paso inicial
+		private string _currentFootstepEvent = "event:/Footstep"; // tipo de paso inicial
 
 		[SerializeField]
 		private Transform _cameraHolder;
@@ -137,17 +149,22 @@ namespace StarterAssets
 				{
 					Debug.LogWarning("CameraHolder no encontrado. Asigna manualmente en el inspector");
 				}
-			} 
-		}
+			}
 
-		private void Update()
+            _breathingInstance = FMODUnity.RuntimeManager.CreateInstance(breathingEvent);
+            _breathingInstance.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform.position));
+            _breathingInstance.start();
+        }
+
+        private void Update()
 		{
 			JumpAndGravity();
 			GroundedCheck();
 			Move();
-		}
+            UpdateBreathing();
+        }
 
-		private void LateUpdate()
+        private void LateUpdate()
 		{
 			CameraRotation();
 		}
@@ -330,6 +347,25 @@ namespace StarterAssets
 
             _cameraHolder.localRotation = originalRot;
         }
+
+        private void UpdateBreathing()
+        {
+            // Aumenta si está corriendo
+            if (_input.sprint && _input.move != Vector2.zero)
+            {
+                _breathingLevel += Time.deltaTime * breathingRiseRate * Mathf.Lerp(0.5f, 1f, _breathingLevel);
+            }
+            else
+            {
+                _breathingLevel -= Time.deltaTime * breathingDecayRate * Mathf.Lerp(1f, 0.5f, _breathingLevel);
+            }
+
+            _breathingLevel = Mathf.Clamp01(_breathingLevel);
+
+            _breathingInstance.setParameterByName("actividad", _breathingLevel);
+            _breathingInstance.set3DAttributes(FMODUnity.RuntimeUtils.To3DAttributes(transform.position));
+        }
+
 
 
         private static float ClampAngle(float lfAngle, float lfMin, float lfMax)

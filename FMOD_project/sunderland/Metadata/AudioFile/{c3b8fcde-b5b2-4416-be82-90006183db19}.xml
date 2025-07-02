@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{c3b8fcde-b5b2-4416-be82-90006183db19}">
+		<property name="assetPath">
+			<value>male_breathing2.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>2.1707256235827663</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{15451c2e-d49d-44e1-bf63-4bc9b05943b8}</destination>
+		</relationship>
+	</object>
+</objects>
